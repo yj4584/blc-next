@@ -1,0 +1,123 @@
+@import url("https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Calligraffitti&family=Nanum+Gothic&family=Nanum+Pen+Script&family=Yeon+Sung&display=swap');
+// reset
+html,
+body,
+div,
+ul,
+li,
+p,
+input, section {
+  margin: 0;
+  padding: 0;
+  // overflow-x: hidden;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  padding-block-start: 0;
+  padding-block-end: 0;
+  //margin-inline-start: 0px;
+  //margin-inline-end: 0px;
+  // padding-inline-start: 40px;
+}
+p {
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+ul,
+li {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+  color: #000; /* inherit */
+}
+address {
+  font-style: normal;
+}
+fieldset,
+input,
+button,
+select {
+  border: none;
+  background: none;
+}
+input:focus,
+select:focus {
+  outline: none;
+}
+button {
+  background: none;
+}
+body {
+  background: #fff;
+  font-family: "Nanum Gothic", sans-serif, "Mulish", sans-serif;
+  position: relative;
+}
+.App {
+  position: relative;
+}
+
+// contents area width
+.container {
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+@media (min-width: 576px) {
+  .container {
+    max-width: 540px;
+  }
+}
+@media (min-width: 758px) {
+  .container {
+    max-width: 720px;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    max-width: 960px;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+}
+
+// color
+$basic-bg: #eee;
+$bar-bg: #212b3b;
+$card-bg: #37465b;
+$card-bg-light: #556780;
+$point-color: #5affe7;
+
+.title-area {
+  width: 100%;
+  height: 200px;
+  background-image: url('/images/steelwork.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding-top: 120px;
+  box-sizing: border-box;
+  .title {
+      font-size: 2rem;
+      color: #fff;
+  }
+}
+.sub-title{
+  margin-top: 30px;
+  width: 100%;
+  height: 70px;
+  line-height: 70px;
+  background: #eee;
+  font-size: 3rem;
+}
+
+.visible {
+  display: block;
+}
+.invisible {
+  display: none;
+}
+

@@ -1,0 +1,301 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { LoginInfoInterface } from 'data-interface/auth-interface';
+import WgCrypto from 'modules/common/WgCrypto';
+import CocodaUser from 'models/webtoonguide/CocodaUser';
+import CocodaUserCocodaUserGroup from 'models/webtoonguide/CocodaUserCocodaUserGroup';
+import CocodaUserApiToken from 'models/webtoonguide/CocodaUserApiToken';
+import { ableUserGroupIds } from 'ts-data-file/access/user';
+import { Op } from 'sequelize';
+
+export function getLangCode(headers: any) {
+	let nowLangCode = 'ko';
+	try {
+		if (typeof headers['accept-language'] != 'undefined') {
+			let koIndex = headers['accept-language'].indexOf('ko');
+			let enIndex = headers['accept-language'].indexOf('en');
+			let jaIndex = headers['accept-language'].indexOf('ja');
+			let firstIndex = 10000000;
+			if (koIndex != -1 && koIndex < firstIndex) {
+				firstIndex = koIndex;
+				nowLangCode = 'ko';
+			}
+			if (enIndex != -1 && enIndex < firstIndex) {
+				firstIndex = enIndex;
+				nowLangCode = 'en';
+			}
+			if (jaIndex != -1 && jaIndex < firstIndex) {
+				firstIndex = jaIndex;
+				nowLangCode = 'ja';
+			}
+		}
+		if (typeof headers.cookie != 'undefined') {
+			if (headers.cookie.includes('cocoda-sale-admin-lang-code=ko')) {
+				nowLangCode = 'ko';
+			} else if (headers.cookie.includes('cocoda-sale-admin-lang-code=en')) {
+				nowLangCode = 'en';
+			} else if (headers.cookie.includes('cocoda-sale-admin-lang-code=ja')) {
+				nowLangCode = 'ja';
+			}
+		}
+	} catch {}
+	return nowLangCode;
+}
+
+export function getNowCustomerId(props: {
+	req: NextApiRequest;
+	res: NextApiResponse;
+	customerIds: number[];
+}) {
+	if (props.customerIds?.length == 0) {
+		return null;
+	}
+	let myHeader: any = props.req.headers;
+	let nowCustomerId = props.customerIds[0];
+
+	try {
+		if (myHeader.cookie.includes('cocoda-sale-admin-customer-id=')) {
+			let strCookieSplit = myHeader.cookie.split(';');
+			let cookies: any = {};
+			strCookieSplit.forEach((cookie: string) => {
+				cookie = cookie.trim();
+				let cookieData = cookie.split('=');
+				if (cookieData[1] == '') {
+					return;
+				}
+				cookies[cookieData[0]] = cookieData[1];
+			});
+			let cookieCustomerId = cookies['cocoda-sale-admin-customer-id'];
+			if (props.customerIds.includes(Number(cookieCustomerId))) {
+				nowCustomerId = Number(cookieCustomerId);
+			}
+		}
+	} catch {
+		console.log('error');
+	}
+
+	return nowCustomerId;
+}
+
+export function setCookie(props: {
+	req: NextApiRequest;
+	res: NextApiResponse;
+	loginTime: string;
+	authKey: string;
+	nowLangCode?: string;
+	maxSessionTime?: number;
+	customerIds?: number[];
+}) {
+	let now = new Date();
+	let time = now.getTime();
+	let maxSessionTime: number = -1;
+	let expiresText = '-1';
+	if (typeof props.maxSessionTime == 'undefined') {
+		maxSessionTime =
+			1000 *
+			60 *
+			(typeof process.env.AUTH_COOKIE_TIME == 'undefined'
+				? 240
+				: Number(process.env.AUTH_COOKIE_TIME));
+		let expireTime = time + maxSessionTime;
+		now.setTime(expireTime);
+		expiresText = now.toUTCString();
+	} else if (props.maxSessionTime == -1) {
+		expiresText = '-1';
+	} else {
+		let expireTime = time + props.maxSessionTime;
+		now.setTime(expireTime);
+		expiresText = now.toUTCString();
+	}
+	let nowLangCode = 'ko';
+	let myHeader: any = props.req.headers;
+	if (typeof props.nowLangCode == 'undefined') {
+		nowLangCode = getLangCode(myHeader);
+	} else {
+		nowLangCode = props.nowLangCode;
+	}
+	let insertCookies = [
+		`cocoda-sale-admin-lg-time=${props.loginTime}; path=/; expires=${expiresText}`,
+		`cocoda-sale-admin-ak-token=${props.authKey}; path=/; expires=${expiresText}`,
+		`cocoda-sale-admin-lang-code=${nowLangCode}; path=/; expires=${expiresText}`,
+	];
+
+	if (typeof props.customerIds != 'undefined' && props.customerIds.length > 0) {
+		let nowCustomerId = getNowCustomerId({
+			req: props.req,
+			res: props.res,
+			customerIds: props.customerIds,
+		});
+		if (nowCustomerId != null) {
+			insertCookies.push(
+				`cocoda-sale-admin-customer-id=${nowCustomerId}; path=/; expires=${expiresText}`,
+			);
+		}
+	}
+
+	props.res.setHeader('Set-Cookie', insertCookies);
+}
+
+export async function AuthCheck(
+	req: NextApiRequest,
+	res: NextApiResponse,
+): Promise<LoginInfoInterface> {
+	let maxSessionTime =
+		1000 *
+		60 *
+		(typeof process.env.AUTH_COOKIE_TIME == 'undefined'
+			? 240
+			: Number(process.env.AUTH_COOKIE_TIME));
+	let strCookies =
+		typeof req.headers.cookie == 'undefined' ? '' : req.headers.cookie;
+	let strCookieSplit = strCookies.split(';');
+	let cookies: any = {};
+	strCookieSplit.forEach((cookie: string) => {
+		cookie = cookie.trim();
+		let cookieData = cookie.split('=');
+		if (cookieData[1] == '') {
+			return;
+		}
+		cookies[cookieData[0]] = cookieData[1];
+	});
+	let loginInfo: LoginInfoInterface = {
+		isLogin: false,
+		userName: '',
+		userId: null,
+		userEmail: null,
+		langCode: 'ko',
+		otherData: {
+			isAdmin: false,
+			customerIds: [],
+		},
+	};
+	let nowLangCode = getLangCode(req.headers);
+	loginInfo.langCode = nowLangCode;
+	try {
+		let akTokenCookie: any =
+			typeof cookies['cocoda-sale-admin-ak-token'] == 'undefined'
+				? null
+				: cookies['cocoda-sale-admin-ak-token'];
+		if (akTokenCookie == null) {
+			return loginInfo;
+		}
+		let lgTimeCookie: any =
+			typeof cookies['cocoda-sale-admin-lg-time'] == 'undefined'
+				? null
+				: cookies['cocoda-sale-admin-lg-time'];
+		if (lgTimeCookie == null) {
+			return loginInfo;
+		}
+		let nowTimeGap = new Date().getTime() - lgTimeCookie * 1000;
+		if (nowTimeGap < -10000) {
+			//10초 이상 시간이 빠르면 오류 계산
+			setCookie({
+				req: req,
+				res: res,
+				loginTime: '',
+				authKey: '',
+				maxSessionTime: maxSessionTime,
+				nowLangCode: nowLangCode,
+			});
+			return loginInfo;
+		}
+		if (nowTimeGap > maxSessionTime) {
+			//세션 시간 넘어간 로그인은 자동 로그아웃
+			setCookie({
+				req: req,
+				res: res,
+				loginTime: '',
+				authKey: '',
+				maxSessionTime: maxSessionTime,
+				nowLangCode: nowLangCode,
+			});
+			return loginInfo;
+		}
+		let apiKey: string =
+			typeof process.env.MIX_API_MODULE_API_KEY == 'undefined'
+				? ''
+				: process.env.MIX_API_MODULE_API_KEY;
+
+		let hashToken = WgCrypto.processDecrypt(
+			akTokenCookie,
+			lgTimeCookie + apiKey,
+		);
+		let authApiToken: any = await CocodaUserApiToken.findOne({
+			where: {
+				hash_token: hashToken,
+			},
+			attributes: ['cocoda_user_id', 'cocoda_user_email', 'last_check_time'],
+		});
+		if (authApiToken == null) {
+			return loginInfo;
+		}
+		authApiToken = JSON.parse(JSON.stringify(authApiToken));
+
+		let user: any = await CocodaUser.findOne({
+			where: { id: authApiToken.cocoda_user_id, is_delete: 0 },
+			attributes: ['id', 'name', 'email'],
+		});
+		if (user == null) {
+			return loginInfo;
+		}
+		user = JSON.parse(JSON.stringify(user));
+		//관리자 체크
+		let userUserGroup = await CocodaUserCocodaUserGroup.findOne({
+			where: {
+				cocoda_user_id: authApiToken.cocoda_user_id,
+				cocoda_user_group_id: { [Op.in]: ableUserGroupIds },
+			},
+			attributes: ['cocoda_user_group_id'],
+		}).then((res) => res?.get({ plain: true }));
+		if (userUserGroup == null) {
+			return loginInfo;
+		} else if (userUserGroup.cocoda_user_group_id === 1) {
+			loginInfo.otherData.isAdmin = true;
+		} else {
+			loginInfo.otherData.isAdmin = false;
+		}
+
+		loginInfo.isLogin = true;
+		loginInfo.userName = user.name;
+		loginInfo.userId = authApiToken.cocoda_user_id;
+		loginInfo.userEmail = authApiToken.cocoda_user_email;
+
+		let loginTime = Math.floor(new Date().getTime() * 0.001).toString();
+
+		let authKey = WgCrypto.processEncrypt(hashToken, loginTime + apiKey);
+
+		let now = new Date();
+		let time = now.getTime();
+		let expireTime = time + maxSessionTime;
+		now.setTime(expireTime);
+
+		await CocodaUserApiToken.update(
+			{
+				last_check_time: Number(loginTime),
+			},
+			{
+				where: {
+					hash_token: hashToken,
+				},
+			},
+		);
+		setCookie({
+			req: req,
+			res: res,
+			loginTime: loginTime,
+			authKey: authKey,
+			maxSessionTime: maxSessionTime,
+			nowLangCode: nowLangCode,
+		});
+		return loginInfo;
+	} catch (error) {
+		setCookie({
+			req: req,
+			res: res,
+			loginTime: '',
+			authKey: '',
+			maxSessionTime: maxSessionTime,
+			nowLangCode: nowLangCode,
+		});
+		return loginInfo;
+	}
+}

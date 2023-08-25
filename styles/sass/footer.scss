@@ -1,0 +1,22 @@
+.footer-section {
+    .footer-area{
+        background: #424242;
+        color: #fff;
+        padding: 5vh 0;
+        .footer-title {
+            font-size: 1.2rem;
+        }
+    }
+    
+    .scroll-image {
+        width: 100%;
+        height: 400px;
+        background-image: url('/images/steelwork.jpg');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        margin-top: 100px;
+        display: table;
+    }
+}
