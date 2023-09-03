@@ -9,26 +9,25 @@ const GetMethod = async (
   req: NextApiRequest,
   res: NextApiResponse<ApiDataInterface>
 ) => {
-  let isLogin = await AuthCheck(req, res);
-  if (isLogin.isLogin == false) {
-    return res.status(200).json({
-      isLogin: isLogin.isLogin,
-      msg: "not login",
-      code: 400,
-      result: null,
-    });
-  }
+  // // let isLogin = await AuthCheck(req, res);
+  // // if (isLogin.isLogin == false) {
+  // //   return res.status(200).json({
+  // //     isLogin: isLogin.isLogin,
+  // //     msg: "not login",
+  // //     code: 400,
+  // //     result: null,
+  // //   });
+  // // }
 
-  const pageTitle = isLogin.isLogin
-    ? `사용자: [${isLogin.userName}] 총판 관리자 Dashboard`
-    : "총판 관리자 Dashboard";
+  // const pageTitle = isLogin.isLogin
+  //   ? `사용자: [${isLogin.userName}] 총판 관리자 Dashboard`
+  //   : "총판 관리자 Dashboard";
   return res.status(200).json({
-    isLogin: isLogin.isLogin,
     msg: "",
     code: 200,
-    result: { isAdmin: isLogin.otherData.isAdmin },
+    result: { isAdmin: false },
     metaInfo: {
-      title: pageTitle,
+      title: '',
       description: "총판 관리자 Dashboard",
       headerDatas: [{ title: "Dashboard", link: "/" }],
     },

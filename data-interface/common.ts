@@ -56,7 +56,7 @@ export interface MetaInfoInterface {
 }
 
 export interface ApiDataInterface {
-	isLogin: boolean;
+	isLogin?: boolean;
 	msg: string;
 	code: number;
 	result: any;

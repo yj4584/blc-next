@@ -70,9 +70,9 @@ export function fetchModule(
 				if (apiData.code == 404) {
 					document.location = '/error/404';
 				}
-				if (isOnlyLogin == true && apiData.isLogin == false) {
-					document.location = `/auth/login?re=${encodeURIComponent(pathName)}`;
-				}
+				// if (isOnlyLogin == true && apiData.isLogin == false) {
+				// 	document.location = `/auth/login?re=${encodeURIComponent(pathName)}`;
+				// }
 			}
 			return apiData;
 		});
@@ -137,18 +137,18 @@ export async function fetchSSRModule(
 		result.metaInfo = apiData.metaInfo;
 	}
 
-	if (isOnlyLogin == true && apiData.isLogin == false) {
-		result.isError = true;
-		result.data = {
-			redirect: {
-				permanent: false,
-				destination: `/auth/login?re=${encodeURIComponent(
-					ssrContext.resolvedUrl,
-				)}`,
-			},
-			props: {},
-		};
-	}
+	// if (isOnlyLogin == true && apiData.isLogin == false) {
+	// 	result.isError = true;
+	// 	result.data = {
+	// 		redirect: {
+	// 			permanent: false,
+	// 			destination: `/auth/login?re=${encodeURIComponent(
+	// 				ssrContext.resolvedUrl,
+	// 			)}`,
+	// 		},
+	// 		props: {},
+	// 	};
+	// }
 	if (apiData.code == 404) {
 		result.isError = true;
 		result.data = {

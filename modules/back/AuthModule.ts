@@ -2,7 +2,7 @@ import WgCrypto from 'modules/common/WgCrypto';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcrypt';
 import requestIp from 'request-ip';
-import { getLangCode, setCookie } from 'modules/back/AuthCheck';
+import { setCookie } from 'modules/back/AuthCheck';
 import CocodaUser from 'models/webtoonguide/CocodaUser';
 import CocodaUserCocodaUserGroup from 'models/webtoonguide/CocodaUserCocodaUserGroup';
 import CocodaUserApiToken from 'models/webtoonguide/CocodaUserApiToken';
@@ -53,7 +53,6 @@ export async function loginAction(
 		authToken: '',
 		userInfo: null,
 	};
-	let nowLangCode = getLangCode(req.headers);
 	let user: any = await CocodaUser.findOne({
 		where: { email: email, is_delete: 0 },
 		attributes: ['id', 'email', 'password'],
@@ -161,7 +160,6 @@ export async function loginAction(
 			loginTime: loginTime,
 			authKey: authKey,
 			maxSessionTime: -1,
-			nowLangCode: agencyLangId ? langIdToLangCode[agencyLangId] : nowLangCode,
 		});
 	} else {
 		setCookie({
@@ -170,7 +168,6 @@ export async function loginAction(
 			loginTime: loginTime,
 			authKey: authKey,
 			maxSessionTime: -1,
-			nowLangCode: nowLangCode,
 		});
 	}
 	return result;

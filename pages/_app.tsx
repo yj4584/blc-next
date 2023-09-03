@@ -7,8 +7,6 @@ import reduxWrapper, { configureStore } from 'redux-components/store/store';
 import { Provider } from 'react-redux';
 import App from 'next/app';
 import { fetchSSRModule } from 'modules/front/FetchModule';
-import LangTrans from 'modules/front/TextModule';
-import { setLangCode } from 'redux-components/reducers/langData';
 import React, { useState, useEffect } from 'react';
 import { ActionCreators } from 'redux-components/actions/user';
 
@@ -22,16 +20,16 @@ function MyApp({ Component, pageProps, appInitData }: MyAppProps) {
 	const router = useRouter();
 	const { dispatch } = store;
 
-	useEffect(() => {
-		try {
-			if (userEmail != appInitData.userData.userEmail) {
-				setUserEmail(appInitData.userData.email);
-				dispatch(ActionCreators.login(appInitData.userData));
-			}
-		} catch (error) {
-			console.error('[No User]');
-		}
-	}, [appInitData.userData?.userEmail]);
+	// useEffect(() => {
+	// 	try {
+	// 		if (userEmail != appInitData.userData.userEmail) {
+	// 			setUserEmail(appInitData.userData.email);
+	// 			dispatch(ActionCreators.login(appInitData.userData));
+	// 		}
+	// 	} catch (error) {
+	// 		console.error('[No User]');
+	// 	}
+	// }, [appInitData.userData?.userEmail]);
 	let metaInfo: any = {};
 	if (typeof pageProps.metaInfo != 'undefined') {
 		metaInfo = pageProps.metaInfo;
@@ -41,18 +39,7 @@ function MyApp({ Component, pageProps, appInitData }: MyAppProps) {
 	if (router.pathname.indexOf('/auth/login') == 0) {
 		pageType = 'login';
 	}
-
-	if (typeof appInitData.langCode != 'undefined') {
-		LangTrans.getInstance().setChangeLang(appInitData.langCode);
-	}
-	if (
-		['ko', 'en', 'ja'].includes(LangTrans.getInstance().getLangKey()) ==
-			false &&
-		typeof appInitData.langData != 'undefined'
-	) {
-		LangTrans.getInstance().setChangeLang(appInitData.langCode);
-		dispatch(setLangCode(appInitData.langCode));
-	}
+	
 
 	return (
 		<Provider store={store}>
@@ -71,17 +58,10 @@ MyApp.getInitialProps = async (context: AppContext) => {
 	}
 	appProps = await App.getInitialProps(context);
 	appProps.appInitData = {};
-	const apiData = await fetchSSRModule(context.ctx, {
-		url: `${process.env.SERVER_HOST_URL}/api/language/language`,
-		method: 'GET',
-	});
-	const userData = await fetchSSRModule(context.ctx, {
-		url: `${process.env.SERVER_HOST_URL}/api/auth/login-check`,
-		method: 'GET',
-	});
-
-	appProps.appInitData.langCode = apiData.data.langCode;
-	appProps.appInitData.userData = userData.data;
+	// const userData = await fetchSSRModule(context.ctx, {
+	// 	url: `${process.env.SERVER_HOST_URL}/api/auth/login-check`,
+	// 	method: 'GET',
+	// });
 
 	return { ...appProps };
 };

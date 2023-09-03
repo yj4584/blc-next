@@ -103,6 +103,7 @@ $point-color: #5affe7;
   .title {
       font-size: 2rem;
       color: #fff;
+      text-align: center;
   }
 }
 .sub-title{
@@ -112,6 +113,7 @@ $point-color: #5affe7;
   line-height: 70px;
   background: #eee;
   font-size: 3rem;
+  text-align: center;
 }
 
 .visible {
@@ -121,3 +123,6 @@ $point-color: #5affe7;
   display: none;
 }
 
+.text-center {
+ text-align: center; 
+}

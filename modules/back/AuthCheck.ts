@@ -7,40 +7,6 @@ import CocodaUserApiToken from 'models/webtoonguide/CocodaUserApiToken';
 import { ableUserGroupIds } from 'ts-data-file/access/user';
 import { Op } from 'sequelize';
 
-export function getLangCode(headers: any) {
-	let nowLangCode = 'ko';
-	try {
-		if (typeof headers['accept-language'] != 'undefined') {
-			let koIndex = headers['accept-language'].indexOf('ko');
-			let enIndex = headers['accept-language'].indexOf('en');
-			let jaIndex = headers['accept-language'].indexOf('ja');
-			let firstIndex = 10000000;
-			if (koIndex != -1 && koIndex < firstIndex) {
-				firstIndex = koIndex;
-				nowLangCode = 'ko';
-			}
-			if (enIndex != -1 && enIndex < firstIndex) {
-				firstIndex = enIndex;
-				nowLangCode = 'en';
-			}
-			if (jaIndex != -1 && jaIndex < firstIndex) {
-				firstIndex = jaIndex;
-				nowLangCode = 'ja';
-			}
-		}
-		if (typeof headers.cookie != 'undefined') {
-			if (headers.cookie.includes('cocoda-sale-admin-lang-code=ko')) {
-				nowLangCode = 'ko';
-			} else if (headers.cookie.includes('cocoda-sale-admin-lang-code=en')) {
-				nowLangCode = 'en';
-			} else if (headers.cookie.includes('cocoda-sale-admin-lang-code=ja')) {
-				nowLangCode = 'ja';
-			}
-		}
-	} catch {}
-	return nowLangCode;
-}
-
 export function getNowCustomerId(props: {
 	req: NextApiRequest;
 	res: NextApiResponse;
@@ -106,17 +72,11 @@ export function setCookie(props: {
 		now.setTime(expireTime);
 		expiresText = now.toUTCString();
 	}
-	let nowLangCode = 'ko';
 	let myHeader: any = props.req.headers;
-	if (typeof props.nowLangCode == 'undefined') {
-		nowLangCode = getLangCode(myHeader);
-	} else {
-		nowLangCode = props.nowLangCode;
-	}
+	
 	let insertCookies = [
 		`cocoda-sale-admin-lg-time=${props.loginTime}; path=/; expires=${expiresText}`,
 		`cocoda-sale-admin-ak-token=${props.authKey}; path=/; expires=${expiresText}`,
-		`cocoda-sale-admin-lang-code=${nowLangCode}; path=/; expires=${expiresText}`,
 	];
 
 	if (typeof props.customerIds != 'undefined' && props.customerIds.length > 0) {
@@ -162,14 +122,11 @@ export async function AuthCheck(
 		userName: '',
 		userId: null,
 		userEmail: null,
-		langCode: 'ko',
 		otherData: {
 			isAdmin: false,
 			customerIds: [],
 		},
 	};
-	let nowLangCode = getLangCode(req.headers);
-	loginInfo.langCode = nowLangCode;
 	try {
 		let akTokenCookie: any =
 			typeof cookies['cocoda-sale-admin-ak-token'] == 'undefined'
@@ -194,7 +151,6 @@ export async function AuthCheck(
 				loginTime: '',
 				authKey: '',
 				maxSessionTime: maxSessionTime,
-				nowLangCode: nowLangCode,
 			});
 			return loginInfo;
 		}
@@ -206,7 +162,6 @@ export async function AuthCheck(
 				loginTime: '',
 				authKey: '',
 				maxSessionTime: maxSessionTime,
-				nowLangCode: nowLangCode,
 			});
 			return loginInfo;
 		}
@@ -284,7 +239,6 @@ export async function AuthCheck(
 			loginTime: loginTime,
 			authKey: authKey,
 			maxSessionTime: maxSessionTime,
-			nowLangCode: nowLangCode,
 		});
 		return loginInfo;
 	} catch (error) {
@@ -294,7 +248,6 @@ export async function AuthCheck(
 			loginTime: '',
 			authKey: '',
 			maxSessionTime: maxSessionTime,
-			nowLangCode: nowLangCode,
 		});
 		return loginInfo;
 	}

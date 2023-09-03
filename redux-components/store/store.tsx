@@ -12,13 +12,7 @@ import { langDataReducer } from 'redux-components/reducers/langData';
 // import { globalHeaderDataReducer } from 'redux-components/reducers/globalHeader';
 
 const rootReducer = combineReducers({
-	user: userReducer,
-	// language: languageReducer,
-	// header: headerReducer,
-	// globalHeader: globalHeaderDataReducer,
-	langData: langDataReducer,
-	// currentReport: reportReducer,
-	// newNotices: newNoticeReducer,
+	// user: userReducer,
 });
 
 export const configureStore = () => {

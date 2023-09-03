@@ -23,17 +23,17 @@ export default function Header() {
 							setShowWoodSubMenu(false);
 						}}
 					>
-						<Link href="/wood">합성목재</Link>
+						<Link href="/product/deck">합성목재</Link>
 						<ul
 							className={`sub-menu ${
 								showWoodSubMenu ? 'visible' : 'invisible'
 							}`}
 						>
 							<li className="sub-menu-item">
-								<Link href="/wood">데크&클립</Link>
+								<Link href="/product/deck">데크&클립</Link>
 							</li>
 							<li className="sub-menu-item">
-								<Link href="/fence">휀스&브라켓</Link>
+								<Link href="/product/fence">휀스&브라켓</Link>
 							</li>
 						</ul>
 					</li>
@@ -46,17 +46,17 @@ export default function Header() {
 							setShowSteelSubMenu(false);
 						}}
 					>
-						<Link href="/steelwork">연결철물&주춧돌</Link>
+						<Link href="/product/steelwork">연결철물&주춧돌</Link>
 						<ul
 							className={`sub-menu ${
 								showSteelSubMenu ? 'visible' : 'invisible'
 							}`}
 						>
 							<li className="sub-menu-item">
-								<Link href="/steelwork">연결철물</Link>
+								<Link href="/product/steelwork">연결철물</Link>
 							</li>
 							<li className="sub-menu-item">
-								<Link href="/stone">주춧돌</Link>
+								<Link href="/product/stone">주춧돌</Link>
 							</li>
 						</ul>
 					</li>

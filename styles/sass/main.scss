@@ -28,7 +28,7 @@
     box-sizing: border-box;
     transition: 0.5s;
     &.banner1{
-      background: url("/images/deck.jpg");
+      background: url("https://blcrasno-bucket.s3.ap-northeast-2.amazonaws.com/deck.jpg");
     }
     &.banner2{
       background: url("/images/steelwork.jpg");
