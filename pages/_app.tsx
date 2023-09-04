@@ -9,6 +9,7 @@ import App from 'next/app';
 import { fetchSSRModule } from 'modules/front/FetchModule';
 import React, { useState, useEffect } from 'react';
 import { ActionCreators } from 'redux-components/actions/user';
+import AdminLayout from 'ts-components/Layouts/admin/AdminLayout';
 
 const store = configureStore();
 interface MyAppProps extends AppProps {
@@ -38,14 +39,24 @@ function MyApp({ Component, pageProps, appInitData }: MyAppProps) {
 	let pageType = 'default';
 	if (router.pathname.indexOf('/auth/login') == 0) {
 		pageType = 'login';
+	} else if (
+		router.pathname === '/admin' ||
+		router.pathname.indexOf('/admin/') >= 0
+	) {
+		pageType = 'admin';
 	}
-	
 
 	return (
 		<Provider store={store}>
-			<MasterLayout metaInfo={metaInfo} pageType={pageType}>
-				<Component {...pageProps} />
-			</MasterLayout>
+			{pageType == 'admin' ? (
+				<AdminLayout>
+					<Component {...pageProps} />
+				</AdminLayout>
+			) : (
+				<MasterLayout metaInfo={metaInfo} pageType={pageType}>
+					<Component {...pageProps} />
+				</MasterLayout>
+			)}
 		</Provider>
 	);
 }
