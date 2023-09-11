@@ -3,7 +3,6 @@ import { fetchModule, fetchSSRModule } from 'modules/front/FetchModule';
 import { useState } from 'react';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-	let queryData = context.query;
 	let apiUrl = `${process.env.SERVER_HOST_URL}/api/dashboard`;
 	//아래는 전체적인 예시 api, 실제 그대로 해당 api를 사용할 필요는 없음
 	const apiData = await fetchSSRModule(

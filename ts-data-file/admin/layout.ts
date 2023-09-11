@@ -13,31 +13,31 @@ export const AdminMenuData: AdminMenuGroupInterface[] = [
 	{
 		menus: [
 			{
-				className: 'fa-brands fa-google',
+				className: 'fa-solid fa-paperclip',
 				title: '데크&클립',
-				link: '/admin/product/deck',
+				link: '/admin/deck',
 			},
 			{
-				className: 'fa-brands fa-youtube',
+				className: 'fa-solid fa-xmarks-lines',
 				title: '휀스&브라켓',
-				link: '/admin/product/fence',
+				link: '/admin/fence',
 			},
 			{
-				className: 'fa-brands fa-twitter',
+				className: 'fa-solid fa-link',
 				title: '연결철물',
-				link: '/admin/product/steelwork',
+				link: '/admin/steelwork',
 			},
 			{
-				className: 'fa-brands fa-facebook',
+				className: 'fa-solid fa-gem',
 				title: '주춧돌',
-				link: '/admin/product/stone',
+				link: '/admin/stone',
 			},
 		],
 	},
 	{
 		menus: [
 			{
-				className: 'fa-solid fa-sitemap',
+				className: 'fa-solid fa-warehouse',
 				title: '공장 및 목재창고',
 				link: '/admin/facility',
 			},

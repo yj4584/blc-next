@@ -24,10 +24,24 @@ const webtoonguide: DBConfigItemInterface = {
 	},
 };
 
+const blcrasno: DBConfigItemInterface = {
+	username: env.BLC_DB_USERNAME,
+	password: env.BLC_DB_PASSWORD,
+	database: env.BLC_DB_DATABASE,
+	host: env.BLC_DB_HOST,
+	dialect: env.BLC_DB_CONNECTION,
+	port: typeof env.BLC_DB_PORT == 'undefined' ? '3306' : env.BLC_DB_PORT,
+	define: {
+		timestamps: false,
+	},
+};
+
+
 interface DBConfigInterface {
 	[key: string]: DBConfigItemInterface;
 }
 
 export const config: DBConfigInterface = {
 	webtoonguide: webtoonguide,
+	blcrasno: blcrasno
 };

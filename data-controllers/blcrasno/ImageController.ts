@@ -4,69 +4,68 @@ import {
 	InterfaceIncludeDataInterface,
 	ParseFindPropsInterface,
 } from 'data-interface/database/common';
-import parseWebtoonguideInclude from 'data-controllers/parseWebtoonguideInclude';
-import MonetaryUnit, {
-	MonetaryUnitAttribute,
-} from 'models/webtoonguide/MonetaryUnit';
+import parseBlcrasnoInclude from 'data-controllers/parseBlcrasnoInclude';
+import Image, {ImageAttribute} from 'models/blcrasno/Image';
 import parseFindProps from 'data-controllers/parseFindProps';
+import bcrypt from 'bcrypt';
 
 import { convertCamelCaseToSnakeCase } from 'modules/common/CommonFunction';
 
-export interface MonetaryUnitControllerAttribute
-	extends MonetaryUnitAttribute {}
+export interface ImageControllerAttribute extends ImageAttribute {
+}
 
-export default class MonetaryUnitController {
-	static defaultAttributes = ['id', 'key', 'name'];
+export default class ImageController {
+	static defaultAttributes = ['id', 'page', 'category', 'url', 'order', 'order2'];
 	constructor() {}
 
 	static includeChecks(includeDatas: InterfaceIncludeDataInterface[]) {
-		return parseWebtoonguideInclude(includeDatas);
+		return parseBlcrasnoInclude(includeDatas);
 	}
 
 	static async findAll(
 		props: FindInterface,
 		includeDatas: InterfaceIncludeDataInterface[] = [],
-	): Promise<MonetaryUnitControllerAttribute[]> {
+	): Promise<ImageControllerAttribute[]> {
 		let selectOptions: ParseFindPropsInterface =
 			typeof props != 'undefined' ? parseFindProps(props) : {};
 
 		if (typeof selectOptions.attributes == 'undefined') {
-			selectOptions.attributes = MonetaryUnitController.defaultAttributes;
+			selectOptions.attributes = ImageController.defaultAttributes;
 		}
 		if (typeof selectOptions.where == 'undefined') {
 			selectOptions.where = {};
 		}
 
-		selectOptions.include = MonetaryUnitController.includeChecks(includeDatas);
+		selectOptions.include = ImageController.includeChecks(includeDatas);
 
-		const result = await MonetaryUnit.findAll(selectOptions);
+		const result = await Image.findAll(selectOptions);
 		return result;
 	}
 
 	static async findOne(
 		props: FindInterface,
 		includeDatas: InterfaceIncludeDataInterface[] = [],
-	): Promise<MonetaryUnitControllerAttribute | null> {
+	): Promise<ImageControllerAttribute | null> {
 		let selectOptions: ParseFindPropsInterface =
 			typeof props != 'undefined' ? parseFindProps(props) : {};
 
 		if (typeof selectOptions.attributes == 'undefined') {
-			selectOptions.attributes = MonetaryUnitController.defaultAttributes;
+			selectOptions.attributes = ImageController.defaultAttributes;
 		}
 		if (typeof selectOptions.where == 'undefined') {
 			selectOptions.where = {};
 		}
 
-		selectOptions.include = MonetaryUnitController.includeChecks(includeDatas);
+		selectOptions.include = ImageController.includeChecks(includeDatas);
 
-		const result = await MonetaryUnit.findOne(selectOptions);
+		const result = await Image.findOne(selectOptions);
 		return result;
 	}
 
 	static async create(
 		insertData: any,
 		props: CreateInterface = {},
-	): Promise<MonetaryUnitControllerAttribute | null> {
+	): Promise<ImageControllerAttribute | null> {
 		const convertInsertData: any = Object.keys(insertData).reduce(
 			(result, insertDataKey) => {
 				const convertKey = convertCamelCaseToSnakeCase(insertDataKey);
@@ -77,7 +76,7 @@ export default class MonetaryUnitController {
 			},
 			{},
 		);
-		const result = await MonetaryUnit.create(convertInsertData, props).catch(
+		const result = await Image.create(convertInsertData, props).catch(
 			null,
 		);
 		return result;
@@ -87,7 +86,7 @@ export default class MonetaryUnitController {
 		updateData: any,
 		props: FindInterface = {},
 	): Promise<boolean> {
-		const updateResult = await MonetaryUnit.update(updateData, {
+		const updateResult = await Image.update(updateData, {
 			where: props.where,
 		});
 		return updateResult[0] != 0;
