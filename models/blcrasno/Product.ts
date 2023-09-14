@@ -1,46 +1,36 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from 'models/index';
 
-export interface ImageAttribute {
+export interface ProductAttribute {
 	id: number;
-	page: string;
 	category: string;
-	order: number;
-	url: string;
+	name: string;
 }
 
-class Image extends Model<ImageAttribute> implements ImageAttribute {
+class Product extends Model<ProductAttribute> implements ProductAttribute {
 	declare readonly id: number;
-	declare page: string;
 	declare category: string;
-	declare order: number;
-	declare url: string;
+	declare name: string;
 }
 
-export default Image.init(
+export default Product.init(
 	{
 		id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			autoIncrement: true,
 			primaryKey: true,
 		},
-		page: {
-			type: DataTypes.STRING,
-		},
 		category: {
 			type: DataTypes.STRING,
 		},
-		order: {
-			type: DataTypes.INTEGER.UNSIGNED,
-		},
-		url: {
+		name: {
 			type: DataTypes.STRING,
 		},
 	},
 	{
-		tableName: 'images',
+		tableName: 'products',
 		timestamps: false,
 		sequelize: sequelize.blcrasno,
-		modelName: 'image',
+		modelName: 'product',
 	},
 );
