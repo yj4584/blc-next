@@ -20,6 +20,7 @@ const loginStyle = {
 		`)}
 	`,
 	Form: styled.form`
+		box-sizing: border-box;
 		width: 100%;
 		padding: 20px;
 		position: relative;

@@ -3,13 +3,11 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcrypt';
 import requestIp from 'request-ip';
 import { setCookie } from 'modules/back/AuthCheck';
-import CocodaUser from 'models/webtoonguide/CocodaUser';
-import CocodaUserCocodaUserGroup from 'models/webtoonguide/CocodaUserCocodaUserGroup';
-import CocodaUserApiToken from 'models/webtoonguide/CocodaUserApiToken';
+import User from 'models/blcrasno/User';
+import UserApiToken from 'models/blcrasno/UserApiToken';
 import { ableUserGroupIds } from 'ts-data-file/access/user';
 import { ApiLoginInterface } from 'data-interface/auth-interface';
 import { Op } from 'sequelize';
-import ResellerAgencyUserController from 'data-controllers/webtoonguide/ResellerAgencyUserController';
 
 const langIdToLangCode: any = {
 	1: 'ko',
@@ -53,12 +51,13 @@ export async function loginAction(
 		authToken: '',
 		userInfo: null,
 	};
-	let user: any = await CocodaUser.findOne({
-		where: { email: email, is_delete: 0 },
+	let user: any = await User.findOne({
+		where: { email: email},
 		attributes: ['id', 'email', 'password'],
 	});
 	let isLoginFail = false;
 	let cocodaUserId;
+	
 
 	if (user == null) {
 		isLoginFail = true;
@@ -68,18 +67,7 @@ export async function loginAction(
 		let checkPassword = await passwordCheck(password, user.password);
 		if (checkPassword == false) {
 			isLoginFail = true;
-		} else {
-			let userUserGroup = await CocodaUserCocodaUserGroup.findOne({
-				where: {
-					cocoda_user_id: user.id,
-					cocoda_user_group_id: { [Op.in]: ableUserGroupIds },
-				},
-				attributes: ['id'],
-			});
-			if (userUserGroup == null) {
-				isLoginFail = true;
-			}
-		}
+		} 
 	}
 
 	if (isLoginFail) {
@@ -89,11 +77,11 @@ export async function loginAction(
 
 	let hashToken: string = getHashKey(email, password);
 	while (true) {
-		let authApiToken = await CocodaUserApiToken.findOne({
+		let authApiToken = await UserApiToken.findOne({
 			where: {
 				hash_token: hashToken,
 			},
-			attributes: ['cocoda_user_id'],
+			attributes: ['user_id'],
 		});
 		if (authApiToken != null) {
 			hashToken = getHashKey(email, password);
@@ -103,10 +91,10 @@ export async function loginAction(
 		if (typeof ip != 'string') {
 			ip = '';
 		}
-
+		
 		let insertUsetToken = {
-			cocoda_user_id: user.id,
-			cocoda_user_email: user.email,
+			user_id: user.id,
+			user_email: user.email,
 			hash_token: hashToken,
 			user_agent:
 				typeof req.headers['user-agent'] != 'string'
@@ -115,7 +103,8 @@ export async function loginAction(
 			last_check_time: Math.floor(new Date().getTime() * 0.001),
 			ip: ip,
 		};
-		await CocodaUserApiToken.create(insertUsetToken);
+		console.log(insertUsetToken)
+		await UserApiToken.create(insertUsetToken, {logging:true});
 		break;
 	}
 
@@ -137,23 +126,7 @@ export async function loginAction(
 
 	let authKey = WgCrypto.processEncrypt(hashToken, loginTime + apiKey);
 
-	if (
-		!req.headers.cookie ||
-		!req.headers.cookie.includes('cocoda-sale-admin-lang-code')
-	) {
-		let userResellerAgency: any =
-			await ResellerAgencyUserController.getOneByUserIdWithInclude(
-				cocodaUserId,
-				[
-					{
-						key: 'resellerAgency',
-						attributes: ['id', 'name', 'language_id'],
-					},
-				],
-			);
-
-		let agencyLangId = userResellerAgency?.resellerAgency?.language_id;
-
+		
 		setCookie({
 			req: req,
 			res: res,
@@ -161,15 +134,6 @@ export async function loginAction(
 			authKey: authKey,
 			maxSessionTime: -1,
 		});
-	} else {
-		setCookie({
-			req: req,
-			res: res,
-			loginTime: loginTime,
-			authKey: authKey,
-			maxSessionTime: -1,
-		});
-	}
 	return result;
 }
 
@@ -188,16 +152,16 @@ export async function logoutAction(req: NextApiRequest, res: NextApiResponse) {
 	});
 	try {
 		let akTokenCookie: any =
-			typeof cookies['cocoda-sale-admin-ak-token'] == 'undefined'
+			typeof cookies['blcrasno-admin-ak-token'] == 'undefined'
 				? null
-				: cookies['cocoda-sale-admin-ak-token'];
+				: cookies['blcrasno-admin-ak-token'];
 		if (akTokenCookie == null) {
 			return;
 		}
 		let lgTimeCookie: any =
-			typeof cookies['cocoda-sale-admin-lg-time'] == 'undefined'
+			typeof cookies['blcrasno-admin-lg-time'] == 'undefined'
 				? null
-				: cookies['cocoda-sale-admin-lg-time'];
+				: cookies['blcrasno-admin-lg-time'];
 		if (lgTimeCookie == null) {
 			return;
 		}
@@ -211,7 +175,7 @@ export async function logoutAction(req: NextApiRequest, res: NextApiResponse) {
 			lgTimeCookie + apiKey,
 		);
 
-		await CocodaUserApiToken.destroy({
+		await UserApiToken.destroy({
 			where: {
 				hash_token: hashToken,
 			},

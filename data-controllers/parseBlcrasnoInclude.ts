@@ -1,11 +1,21 @@
 import { InterfaceIncludeDataInterface } from 'data-interface/database/common';
 import Image from 'models/blcrasno/Image';
+import Product from 'models/blcrasno/Product';
+import ProductInfo from 'models/blcrasno/ProductInfo';
 
 const includeJoinDatas: any = {
 	image: {
 		model: Image,
 		defaultAttributes: ['id', 'page', 'category', 'url'],
 	},
+	product: {
+		model: Product,
+		defaultAttributes: ['id', 'category', 'name']
+	},
+	productInfo: {
+		model: ProductInfo,
+		defaultAttributes: ['id', 'name', 'height', 'thickness', 'material']
+	}
 };
 const recursionParseInclude = (includeData: InterfaceIncludeDataInterface) => {
 	let myIncludes: any = {};

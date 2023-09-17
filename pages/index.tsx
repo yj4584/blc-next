@@ -3,7 +3,7 @@ import { fetchModule, fetchSSRModule } from 'modules/front/FetchModule';
 import { useState } from 'react';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-	let apiUrl = `${process.env.SERVER_HOST_URL}/api/dashboard`;
+	let apiUrl = `${process.env.SERVER_HOST_URL}/api/admin/main`;
 	//아래는 전체적인 예시 api, 실제 그대로 해당 api를 사용할 필요는 없음
 	const apiData = await fetchSSRModule(
 		context,
@@ -17,7 +17,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	if (apiData.isError == true) {
 		return apiData.data;
 	}
-	let props: any = {};
+  
+	let props: any = apiData.data;
 	if (typeof apiData.metaInfo != 'undefined') {
 		props.metaInfo = apiData.metaInfo;
 	}
@@ -32,12 +33,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	};
 };
 
-export default function MainIndex() {
+export default function MainIndex(props:any) {
   const [currentBanner, setCurrentBanner] = useState<number>(1);
   const [isFadeIn, setIsFadeIn] = useState<boolean>(true);
   return (
     <section className="main-section">
-      <div className={`main-banner banner${currentBanner} ${isFadeIn?'opacity-1':'opacity-0'}`}>
+      <div className={`main-banner banner${currentBanner} ${isFadeIn?'opacity-1':'opacity-0'}`} 
+        style={{
+          backgroundImage: `url(${props.banners[currentBanner-1].url})`,
+          }}
+      >
         {currentBanner==1 && <div className="banner-text"><span>0{currentBanner}</span> 합성목재 데크&클립<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;휀스&브라켓</div>}
         {currentBanner==2 && <div className="banner-text"><span>0{currentBanner}</span> 목조주택 건축용<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;연결철물&주춧돌</div>}
         {currentBanner==3 && <div className="banner-text"><span>0{currentBanner}</span> 공장 및 목재창고</div>}
@@ -78,7 +83,16 @@ export default function MainIndex() {
         </div>
         </div>
       </div>
-      <div className="certificates"><div className="sub-title">인증서</div></div>
+      <div className="certificates">
+        <div className="sub-title">인증서</div>
+        {
+          props.certificates.map((certificateItem:any, certificateIndex:number)=>{
+            return <div className="certificate-image" style={{
+              backgroundImage: `url(${certificateItem.url})`,
+              }} key={`certificate-${certificateIndex}`}></div>
+          })
+        }
+      </div>
     </section>
   );
 }

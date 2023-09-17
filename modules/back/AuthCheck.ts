@@ -1,9 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { LoginInfoInterface } from 'data-interface/auth-interface';
 import WgCrypto from 'modules/common/WgCrypto';
-import CocodaUser from 'models/webtoonguide/CocodaUser';
-import CocodaUserCocodaUserGroup from 'models/webtoonguide/CocodaUserCocodaUserGroup';
-import CocodaUserApiToken from 'models/webtoonguide/CocodaUserApiToken';
+import User from 'models/blcrasno/User';
+import UserApiToken from 'models/blcrasno/UserApiToken';
 import { ableUserGroupIds } from 'ts-data-file/access/user';
 import { Op } from 'sequelize';
 
@@ -19,7 +18,7 @@ export function getNowCustomerId(props: {
 	let nowCustomerId = props.customerIds[0];
 
 	try {
-		if (myHeader.cookie.includes('cocoda-sale-admin-customer-id=')) {
+		if (myHeader.cookie.includes('blcrasno-admin-customer-id=')) {
 			let strCookieSplit = myHeader.cookie.split(';');
 			let cookies: any = {};
 			strCookieSplit.forEach((cookie: string) => {
@@ -30,7 +29,7 @@ export function getNowCustomerId(props: {
 				}
 				cookies[cookieData[0]] = cookieData[1];
 			});
-			let cookieCustomerId = cookies['cocoda-sale-admin-customer-id'];
+			let cookieCustomerId = cookies['blcrasno-admin-customer-id'];
 			if (props.customerIds.includes(Number(cookieCustomerId))) {
 				nowCustomerId = Number(cookieCustomerId);
 			}
@@ -75,8 +74,8 @@ export function setCookie(props: {
 	let myHeader: any = props.req.headers;
 	
 	let insertCookies = [
-		`cocoda-sale-admin-lg-time=${props.loginTime}; path=/; expires=${expiresText}`,
-		`cocoda-sale-admin-ak-token=${props.authKey}; path=/; expires=${expiresText}`,
+		`blcrasno-admin-lg-time=${props.loginTime}; path=/; expires=${expiresText}`,
+		`blcrasno-admin-ak-token=${props.authKey}; path=/; expires=${expiresText}`,
 	];
 
 	if (typeof props.customerIds != 'undefined' && props.customerIds.length > 0) {
@@ -87,7 +86,7 @@ export function setCookie(props: {
 		});
 		if (nowCustomerId != null) {
 			insertCookies.push(
-				`cocoda-sale-admin-customer-id=${nowCustomerId}; path=/; expires=${expiresText}`,
+				`blcrasno-admin-customer-id=${nowCustomerId}; path=/; expires=${expiresText}`,
 			);
 		}
 	}
@@ -129,16 +128,16 @@ export async function AuthCheck(
 	};
 	try {
 		let akTokenCookie: any =
-			typeof cookies['cocoda-sale-admin-ak-token'] == 'undefined'
+			typeof cookies['blcrasno-admin-ak-token'] == 'undefined'
 				? null
-				: cookies['cocoda-sale-admin-ak-token'];
+				: cookies['blcrasno-admin-ak-token'];
 		if (akTokenCookie == null) {
 			return loginInfo;
 		}
 		let lgTimeCookie: any =
-			typeof cookies['cocoda-sale-admin-lg-time'] == 'undefined'
+			typeof cookies['blcrasno-admin-lg-time'] == 'undefined'
 				? null
-				: cookies['cocoda-sale-admin-lg-time'];
+				: cookies['blcrasno-admin-lg-time'];
 		if (lgTimeCookie == null) {
 			return loginInfo;
 		}
@@ -174,19 +173,19 @@ export async function AuthCheck(
 			akTokenCookie,
 			lgTimeCookie + apiKey,
 		);
-		let authApiToken: any = await CocodaUserApiToken.findOne({
+		let authApiToken: any = await UserApiToken.findOne({
 			where: {
 				hash_token: hashToken,
 			},
-			attributes: ['cocoda_user_id', 'cocoda_user_email', 'last_check_time'],
+			attributes: ['user_id', 'user_email', 'last_check_time'],
 		});
 		if (authApiToken == null) {
 			return loginInfo;
 		}
 		authApiToken = JSON.parse(JSON.stringify(authApiToken));
 
-		let user: any = await CocodaUser.findOne({
-			where: { id: authApiToken.cocoda_user_id, is_delete: 0 },
+		let user: any = await User.findOne({
+			where: { id: authApiToken.user_id },
 			attributes: ['id', 'name', 'email'],
 		});
 		if (user == null) {
@@ -194,25 +193,25 @@ export async function AuthCheck(
 		}
 		user = JSON.parse(JSON.stringify(user));
 		//관리자 체크
-		let userUserGroup = await CocodaUserCocodaUserGroup.findOne({
-			where: {
-				cocoda_user_id: authApiToken.cocoda_user_id,
-				cocoda_user_group_id: { [Op.in]: ableUserGroupIds },
-			},
-			attributes: ['cocoda_user_group_id'],
-		}).then((res) => res?.get({ plain: true }));
-		if (userUserGroup == null) {
-			return loginInfo;
-		} else if (userUserGroup.cocoda_user_group_id === 1) {
-			loginInfo.otherData.isAdmin = true;
-		} else {
-			loginInfo.otherData.isAdmin = false;
-		}
+		// let userUserGroup = await CocodaUserCocodaUserGroup.findOne({
+		// 	where: {
+		// 		cocoda_user_id: authApiToken.cocoda_user_id,
+		// 		cocoda_user_group_id: { [Op.in]: ableUserGroupIds },
+		// 	},
+		// 	attributes: ['cocoda_user_group_id'],
+		// }).then((res) => res?.get({ plain: true }));
+		// if (userUserGroup == null) {
+		// 	return loginInfo;
+		// } else if (userUserGroup.cocoda_user_group_id === 1) {
+		// 	loginInfo.otherData.isAdmin = true;
+		// } else {
+		// 	loginInfo.otherData.isAdmin = false;
+		// }
 
 		loginInfo.isLogin = true;
 		loginInfo.userName = user.name;
-		loginInfo.userId = authApiToken.cocoda_user_id;
-		loginInfo.userEmail = authApiToken.cocoda_user_email;
+		loginInfo.userId = authApiToken.user_id;
+		loginInfo.userEmail = authApiToken.user_email;
 
 		let loginTime = Math.floor(new Date().getTime() * 0.001).toString();
 
@@ -223,7 +222,7 @@ export async function AuthCheck(
 		let expireTime = time + maxSessionTime;
 		now.setTime(expireTime);
 
-		await CocodaUserApiToken.update(
+		await UserApiToken.update(
 			{
 				last_check_time: Number(loginTime),
 			},

@@ -18,7 +18,7 @@ const GetMethod = async (
 		result: {},
 		metaInfo: {
 			title: '로그인 페이지',
-			description: '총판 관리자 로그인 페이지',
+			description: '로그인 페이지',
 		},
 	});
 };

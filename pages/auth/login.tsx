@@ -63,7 +63,7 @@ export default function LoginPage() {
 								if (typeof router.query.re != 'undefined') {
 									router.push(router.query.re.toString());
 								} else {
-									router.push('/');
+									router.push('/admin');
 								}
 								return;
 							}
@@ -78,7 +78,6 @@ export default function LoginPage() {
 						</loginStyle.Label>
 						<loginStyle.Input
 							placeholder="ID"
-							type="email"
 							value={email}
 							onChange={(event) => {
 								setEmail(event.target.value);
@@ -96,9 +95,9 @@ export default function LoginPage() {
 							}}
 						/>
 						<loginStyle.Button>LOGIN</loginStyle.Button>
-						<loginStyle.Footer>
+						{/* <loginStyle.Footer>
 							Copyright (c) COINST. All rights reserved.
-						</loginStyle.Footer>
+						</loginStyle.Footer> */}
 					</loginStyle.Body>
 				</loginStyle.Form>
 			</loginStyle.Section>

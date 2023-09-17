@@ -3,11 +3,15 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getFetchData } from 'modules/back/FetchModule';
 import { loginAction } from 'modules/back/AuthModule';
 import { ApiDataInterface } from 'data-interface/common';
+import bcrypt from 'bcrypt';
 
 const GetMethod = async (
 	req: NextApiRequest,
 	res: NextApiResponse<ApiDataInterface>,
 ) => {
+	const defaultPassword = '123456789a';
+	const encPassword = await bcrypt.hash(defaultPassword, 12);
+	console.log(encPassword)
 	return res.status(200).json({
 		isLogin: false,
 		msg: '',
@@ -15,7 +19,7 @@ const GetMethod = async (
 		result: {},
 		metaInfo: {
 			title: '로그인 페이지',
-			description: '총판 관리자 로그인 페이지',
+			description: '로그인 페이지',
 		},
 	});
 };

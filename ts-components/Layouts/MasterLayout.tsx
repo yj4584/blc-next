@@ -10,15 +10,15 @@ function MasterLayout(props: {
 	let htmlTitle =
 		typeof props.metaInfo == 'undefined' ||
 		typeof props.metaInfo.title != 'string'
-			? transText('reseller_admin_page', '총판 관리자 페이지')
+			? '비엘텍크라스노'
 			: `${transText(
 					props.metaInfo.titleTextKey,
 					props.metaInfo.title,
-			  )} - ${transText('reseller_admin_page', '총판 관리자 페이지')}`;
+			  )} - 비엘텍크라스노`;
 	let htmlDescription =
 		typeof props.metaInfo == 'undefined' ||
 		typeof props.metaInfo.description != 'string'
-			? transText('reseller_admin_page', '총판 관리자 페이지')
+			? '비엘텍크라스노'
 			: `${props.metaInfo.description}`;
 	let htmlKeyword =
 		typeof props.metaInfo == 'undefined' ||

@@ -13,15 +13,19 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
 	) {
 		return NextResponse.next();
 	}
-	let userInfo = await AuthCookieCheck(request);
-	const urlData = request.nextUrl.clone();
 
-	// if (userInfo == false) {
-	// 	urlData.pathname = `/auth/login`;
-	// 	urlData.search = `?re=${encodeURIComponent(
-	// 		request.nextUrl.pathname + request.nextUrl.search,
-	// 	)}`;
-	// 	return NextResponse.redirect(`${urlData}`);
-	// }
+	if (request.nextUrl.pathname.startsWith('/admin')){
+		let userInfo = await AuthCookieCheck(request);
+		const urlData = request.nextUrl.clone();
+
+		if (userInfo == false) {
+			urlData.pathname = `/auth/login`;
+			urlData.search = `?re=${encodeURIComponent(
+				request.nextUrl.pathname + request.nextUrl.search,
+			)}`;
+			return NextResponse.redirect(`${urlData}`);
+		}
+	}
+	
 	return NextResponse.next();
 }

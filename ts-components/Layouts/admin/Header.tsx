@@ -6,6 +6,7 @@ import {
 import { AdminMenuData } from 'ts-data-file/admin/layout';
 import { useRouter } from 'next/router';
 import { fetchModule, fetchSSRModule } from 'modules/front/FetchModule';
+import Link from 'next/link';
 
 const AdminSideMenu = () => {
 	const router = useRouter();
@@ -27,10 +28,12 @@ const AdminSideMenu = () => {
 								return (
 									<SideBarElement.SideMenu.MenuItem
 										key={menuIndex}
-										onClick={() => {
-											router.push(menu.link);
-										}}
+										// onClick={() => {
+										// 	router.push(menu.link);
+										// }}
+
 									>
+										<Link href={menu.link}>
 										<SideBarElement.SideMenu.MenuIcon
 											className={
 												typeof menu.className == 'undefined'
@@ -39,6 +42,7 @@ const AdminSideMenu = () => {
 											}
 										/>
 										{menu.title}
+										</Link>
 									</SideBarElement.SideMenu.MenuItem>
 								);
 							})}
