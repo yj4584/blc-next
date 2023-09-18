@@ -33,7 +33,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function ProductIndex(props: any) {
 	const { query } = useRouter();
-	const pageType = typeof query.pageType == 'string' ? query.pageType : '';
+	const pageType = 'fence';
 	return (
 		<ProductDetailComponent
 			productData={props.productData}
