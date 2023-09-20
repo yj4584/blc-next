@@ -1,5 +1,5 @@
 {
-  "name": "cocoda_sale",
+  "name": "blc-next",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start -p 28005",
     "lint": "next lint",
-    "pm2-start": "start npm --name cocoda-sale -- start"
+    "pm2-start": "start npm --name blc-next -- start"
   },
   "dependencies": {
     "@types/node": "20.2.3",

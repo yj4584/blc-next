@@ -1,4 +1,3 @@
-import { transText } from 'modules/front/TextModule';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { JSXElementConstructor, ReactElement } from 'react';
@@ -44,9 +43,7 @@ const MainSectionLayout = ({
 						<RowSection>
 							<TitleSection>{titleName}</TitleSection>
 							{isNewButton == true && (
-								<TitleButton href={`/${menuKey}/create`}>
-									{transText('add', '신규 추가')}
-								</TitleButton>
+								<TitleButton href={`/${menuKey}/create`}>신규 추가</TitleButton>
 							)}
 						</RowSection>
 						{React.cloneElement(

@@ -1,4 +1,3 @@
-import { transText } from 'modules/front/TextModule';
 import Head from 'next/head';
 import DefaultLayout from 'ts-components/Layouts/default/layout';
 
@@ -11,10 +10,7 @@ function MasterLayout(props: {
 		typeof props.metaInfo == 'undefined' ||
 		typeof props.metaInfo.title != 'string'
 			? '비엘텍크라스노'
-			: `${transText(
-					props.metaInfo.titleTextKey,
-					props.metaInfo.title,
-			  )} - 비엘텍크라스노`;
+			: `${props.metaInfo.title} - 비엘텍크라스노`;
 	let htmlDescription =
 		typeof props.metaInfo == 'undefined' ||
 		typeof props.metaInfo.description != 'string'
