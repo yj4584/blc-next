@@ -79,7 +79,7 @@ export default function LoginPage() {
 						<loginStyle.Input
 							placeholder="ID"
 							value={email}
-							onChange={(event) => {
+							onChange={(event: any) => {
 								setEmail(event.target.value);
 							}}
 						/>
@@ -90,7 +90,7 @@ export default function LoginPage() {
 							placeholder="PW"
 							type={'password'}
 							value={password}
-							onChange={(event) => {
+							onChange={(event: any) => {
 								setPassword(event.target.value);
 							}}
 						/>
