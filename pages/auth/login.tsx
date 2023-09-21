@@ -40,7 +40,7 @@ export default function LoginPage() {
 		<>
 			<loginStyle.Section>
 				<loginStyle.Form
-					onSubmit={(event) => {
+					onSubmit={(event: any) => {
 						event.preventDefault();
 						if (router.isReady == false) {
 							return;
