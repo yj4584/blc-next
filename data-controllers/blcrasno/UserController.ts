@@ -5,14 +5,13 @@ import {
 	ParseFindPropsInterface,
 } from 'data-interface/database/common';
 import parseBlcrasnoInclude from 'data-controllers/parseBlcrasnoInclude';
-import User, {UserAttribute} from 'models/blcrasno/User';
+import User, { UserAttribute } from 'models/blcrasno/User';
 import parseFindProps from 'data-controllers/parseFindProps';
 import bcrypt from 'bcrypt';
 
 import { convertCamelCaseToSnakeCase } from 'modules/common/CommonFunction';
 
-export interface UserControllerAttribute extends UserAttribute {
-}
+export interface UserControllerAttribute extends UserAttribute {}
 
 export default class UserController {
 	static defaultAttributes = ['id', 'name', 'user_id', 'user_pwd'];
@@ -76,9 +75,7 @@ export default class UserController {
 			},
 			{},
 		);
-		const result = await User.create(convertInsertData, props).catch(
-			null,
-		);
+		const result = await User.create(convertInsertData, props).catch(null);
 		return result;
 	}
 

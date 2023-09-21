@@ -5,14 +5,13 @@ import {
 	ParseFindPropsInterface,
 } from 'data-interface/database/common';
 import parseBlcrasnoInclude from 'data-controllers/parseBlcrasnoInclude';
-import ProductInfo, {ProductInfoAttribute} from 'models/blcrasno/ProductInfo';
+import ProductInfo, { ProductInfoAttribute } from 'models/blcrasno/ProductInfo';
 import parseFindProps from 'data-controllers/parseFindProps';
 import bcrypt from 'bcrypt';
 
 import { convertCamelCaseToSnakeCase } from 'modules/common/CommonFunction';
 
-export interface ProductInfoControllerAttribute extends ProductInfoAttribute {
-}
+export interface ProductInfoControllerAttribute extends ProductInfoAttribute {}
 
 export default class ProductInfoController {
 	static defaultAttributes = ['id', 'category', 'name'];

@@ -4,9 +4,18 @@ export const AdminMenuData: AdminMenuGroupInterface[] = [
 	{
 		menus: [
 			{
-				className: 'fa-solid fa-book',
+				className: 'fa-solid fa-house',
 				title: '메인페이지',
 				link: '/admin/main',
+			},
+		],
+	},
+	{
+		menus: [
+			{
+				className: 'fa-solid fa-book',
+				title: '소개페이지',
+				link: '/admin/intro',
 			},
 		],
 	},

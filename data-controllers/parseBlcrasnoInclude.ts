@@ -10,12 +10,12 @@ const includeJoinDatas: any = {
 	},
 	product: {
 		model: Product,
-		defaultAttributes: ['id', 'category', 'name']
+		defaultAttributes: ['id', 'category', 'name'],
 	},
 	productInfo: {
 		model: ProductInfo,
-		defaultAttributes: ['id', 'name', 'height', 'thickness', 'material']
-	}
+		defaultAttributes: ['id', 'name', 'height', 'thickness', 'material'],
+	},
 };
 const recursionParseInclude = (includeData: InterfaceIncludeDataInterface) => {
 	let myIncludes: any = {};

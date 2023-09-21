@@ -1,87 +1,84 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from "next";
-import { AuthCheck } from "modules/back/AuthCheck";
-import { getFetchData } from "modules/back/FetchModule";
-import { ApiDataInterface } from "data-interface/common";
-import { LoginInfoInterface } from "data-interface/auth-interface";
-import S3ToongaStorage from "modules/back/S3ToongaStorage";
-import ImageController from "data-controllers/blcrasno/ImageController";
-import ProductController from "data-controllers/blcrasno/ProductController";
-import ProductInfoController from "data-controllers/blcrasno/ProductInfoController";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { AuthCheck } from 'modules/back/AuthCheck';
+import { getFetchData } from 'modules/back/FetchModule';
+import { ApiDataInterface } from 'data-interface/common';
+import { LoginInfoInterface } from 'data-interface/auth-interface';
+import S3ToongaStorage from 'modules/back/S3ToongaStorage';
+import ImageController from 'data-controllers/blcrasno/ImageController';
+import ProductController from 'data-controllers/blcrasno/ProductController';
+import ProductInfoController from 'data-controllers/blcrasno/ProductInfoController';
 
 const PostMethod = async (
-  req: NextApiRequest,
-  res: NextApiResponse<ApiDataInterface>,
-  loginInfo: LoginInfoInterface
+	req: NextApiRequest,
+	res: NextApiResponse<ApiDataInterface>,
+	loginInfo: LoginInfoInterface,
 ) => {
-  let bodyData = await getFetchData(req, res); //body 데이터
-  try {
-    let productId = bodyData.productId;
-    let productInfos = bodyData.productInfos;
-    console.log(productInfos)
-    for (let i=0; i<productInfos.length; i++) {
-      await ProductInfoController.update(
-        productInfos[i],
-        {
-          where: {
-            id: productInfos[i].id
-          }
-        }
-      )
-    }
-    
-    return res.status(200).json({
-      isLogin: loginInfo.isLogin,
-      msg: "업로드 성공",
-      code: 200,
-      result: {
-        success: true
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(200).json({
-      isLogin: true,
-      msg: "업로드 실패",
-      code: 500,
-      result: null,
-    });
-  }
+	let bodyData = await getFetchData(req, res); //body 데이터
+	try {
+		let productId = bodyData.productId;
+		let productInfos = bodyData.productInfos;
+		console.log(productInfos);
+		for (let i = 0; i < productInfos.length; i++) {
+			await ProductInfoController.update(productInfos[i], {
+				where: {
+					id: productInfos[i].id,
+				},
+			});
+		}
+
+		return res.status(200).json({
+			isLogin: loginInfo.isLogin,
+			msg: '업로드 성공',
+			code: 200,
+			result: {
+				success: true,
+			},
+		});
+	} catch (error) {
+		console.log(error);
+		return res.status(200).json({
+			isLogin: true,
+			msg: '업로드 실패',
+			code: 500,
+			result: null,
+		});
+	}
 };
 
 const ApiMethods: any = {
-  POST: PostMethod,
+	POST: PostMethod,
 };
 export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<ApiDataInterface>
+	req: NextApiRequest,
+	res: NextApiResponse<ApiDataInterface>,
 ) {
-  let isLogin = {isLogin: true}
-  // let isLogin = await AuthCheck(req, res);
-  // if (isLogin.isLogin == false) {
-  //   return res.status(200).json({
-  //     isLogin: isLogin.isLogin,
-  //     msg: "not login",
-  //     code: 400,
-  //     result: null,
-  //   });
-  // }
+	let isLogin = { isLogin: true };
+	// let isLogin = await AuthCheck(req, res);
+	// if (isLogin.isLogin == false) {
+	//   return res.status(200).json({
+	//     isLogin: isLogin.isLogin,
+	//     msg: "not login",
+	//     code: 400,
+	//     result: null,
+	//   });
+	// }
 
-  if (typeof req.method != "string") {
-    return res.status(200).json({
-      isLogin: true,
-      msg: "알 수 없는 메소드",
-      code: 404,
-      result: null,
-    });
-  }
-  if (Object.keys(ApiMethods).includes(req.method) == false) {
-    return res.status(200).json({
-      isLogin: true,
-      msg: "알 수 없는 메소드",
-      code: 404,
-      result: null,
-    });
-  }
-  return ApiMethods[req.method](req, res, isLogin);
+	if (typeof req.method != 'string') {
+		return res.status(200).json({
+			isLogin: true,
+			msg: '알 수 없는 메소드',
+			code: 404,
+			result: null,
+		});
+	}
+	if (Object.keys(ApiMethods).includes(req.method) == false) {
+		return res.status(200).json({
+			isLogin: true,
+			msg: '알 수 없는 메소드',
+			code: 404,
+			result: null,
+		});
+	}
+	return ApiMethods[req.method](req, res, isLogin);
 }

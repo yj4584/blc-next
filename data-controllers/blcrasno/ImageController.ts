@@ -5,17 +5,23 @@ import {
 	ParseFindPropsInterface,
 } from 'data-interface/database/common';
 import parseBlcrasnoInclude from 'data-controllers/parseBlcrasnoInclude';
-import Image, {ImageAttribute} from 'models/blcrasno/Image';
+import Image, { ImageAttribute } from 'models/blcrasno/Image';
 import parseFindProps from 'data-controllers/parseFindProps';
 import bcrypt from 'bcrypt';
 
 import { convertCamelCaseToSnakeCase } from 'modules/common/CommonFunction';
 
-export interface ImageControllerAttribute extends ImageAttribute {
-}
+export interface ImageControllerAttribute extends ImageAttribute {}
 
 export default class ImageController {
-	static defaultAttributes = ['id', 'page', 'category', 'url', 'order', 'order2'];
+	static defaultAttributes = [
+		'id',
+		'page',
+		'category',
+		'url',
+		'order',
+		'order2',
+	];
 	constructor() {}
 
 	static includeChecks(includeDatas: InterfaceIncludeDataInterface[]) {
@@ -76,9 +82,7 @@ export default class ImageController {
 			},
 			{},
 		);
-		const result = await Image.create(convertInsertData, props).catch(
-			null,
-		);
+		const result = await Image.create(convertInsertData, props).catch(null);
 		return result;
 	}
 

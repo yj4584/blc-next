@@ -5,14 +5,13 @@ import {
 	ParseFindPropsInterface,
 } from 'data-interface/database/common';
 import parseBlcrasnoInclude from 'data-controllers/parseBlcrasnoInclude';
-import Product, {ProductAttribute} from 'models/blcrasno/Product';
+import Product, { ProductAttribute } from 'models/blcrasno/Product';
 import parseFindProps from 'data-controllers/parseFindProps';
 import bcrypt from 'bcrypt';
 
 import { convertCamelCaseToSnakeCase } from 'modules/common/CommonFunction';
 
-export interface ProductControllerAttribute extends ProductAttribute {
-}
+export interface ProductControllerAttribute extends ProductAttribute {}
 
 export default class ProductController {
 	static defaultAttributes = ['id', 'category', 'name'];
@@ -76,9 +75,7 @@ export default class ProductController {
 			},
 			{},
 		);
-		const result = await Product.create(convertInsertData, props).catch(
-			null,
-		);
+		const result = await Product.create(convertInsertData, props).catch(null);
 		return result;
 	}
 

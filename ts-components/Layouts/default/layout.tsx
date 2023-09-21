@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Header from 'ts-components/Layouts/default/Header';
 import { CustomerLayoutElement } from 'styles/styled-components/layouts/default-layout';
 import { MenuItemInterface, OpenPathNameInterface } from 'data-interface/menu';
+import { Footer } from './Footer';
 
 function DefaultLayout(props: { metaInfo: any; children: any }) {
 	const router = useRouter();
@@ -14,6 +15,7 @@ function DefaultLayout(props: { metaInfo: any; children: any }) {
 			{/* <CustomerLayoutElement.MainSection> */}
 			{props.children}
 			{/* </CustomerLayoutElement.MainSection> */}
+			<Footer />
 		</>
 	);
 }

@@ -30,7 +30,44 @@ const GetMethod = async (
 		console.log(error);
 		return res.status(200).json({
 			isLogin: true,
-			msg: '업로드 실패',
+			msg: '조회 실패',
+			code: 500,
+			result: null,
+		});
+	}
+};
+
+const PutMethod = async (
+	req: NextApiRequest,
+	res: NextApiResponse<ApiDataInterface>,
+	loginInfo: LoginInfoInterface,
+) => {
+	try {
+		let bodyData = await getFetchData(req, res);
+		await IntroController.update(
+			{
+				text: bodyData.text,
+			},
+			{
+				where: {
+					id: 1,
+				},
+			},
+		);
+
+		return res.status(200).json({
+			isLogin: loginInfo.isLogin,
+			msg: '저장 성공',
+			code: 200,
+			result: {
+				success: true,
+			},
+		});
+	} catch (error) {
+		console.log(error);
+		return res.status(200).json({
+			isLogin: true,
+			msg: '저장 실패',
 			code: 500,
 			result: null,
 		});
@@ -39,6 +76,7 @@ const GetMethod = async (
 
 const ApiMethods: any = {
 	GET: GetMethod,
+	PUT: PutMethod,
 };
 export default async function handler(
 	req: NextApiRequest,
