@@ -40,7 +40,7 @@ export default function LoginPage() {
 		<>
 			<loginStyle.Section>
 				<loginStyle.Form
-					onSubmit={(event: any) => {
+					onSubmit={(event) => {
 						event.preventDefault();
 						if (router.isReady == false) {
 							return;
@@ -79,7 +79,7 @@ export default function LoginPage() {
 						<loginStyle.Input
 							placeholder="ID"
 							value={email}
-							onChange={(event: any) => {
+							onChange={(event) => {
 								setEmail(event.target.value);
 							}}
 						/>
@@ -90,7 +90,7 @@ export default function LoginPage() {
 							placeholder="PW"
 							type={'password'}
 							value={password}
-							onChange={(event: any) => {
+							onChange={(event) => {
 								setPassword(event.target.value);
 							}}
 						/>
